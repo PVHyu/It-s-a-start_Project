@@ -1,0 +1,48 @@
+// Đoạn code có những phương thức di chuyển của tàu:
+// + Lấy vị trí trỏ chuột
+// + Object hướng đầu về phía target 
+// + Object đi theo target
+
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ShipMovement : MonoBehaviour
+{
+    // SerializedField allows private variables to be displayed in the Inspector for easy tweaking.
+    [SerializeField] protected Vector3 targetPosition; // The target position in world space.
+    [SerializeField] protected float speed = 0.1f; // The speed at which the ship moves towards the target position.
+
+    void FixedUpdate()
+    {
+        this.GetTargetPosition();
+        this.LootAtTarget();
+        this.Moving();
+        
+    }
+
+    protected virtual void GetTargetPosition()
+    {
+        // Convert the mouse position from screen space to world space.
+        this.targetPosition = InputManager.Instance.MouseWorldPos;
+        // Since we're dealing with 2D, set the Z component to 0 to ensure the ship stays on the same plane.
+        this.targetPosition.z = 0;
+    }
+
+    protected virtual void LootAtTarget()
+    {
+        Vector3 diff = this.targetPosition - transform.parent.position;
+        diff.Normalize();
+        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        transform.parent.rotation = Quaternion.Euler(0f, 0f, rot_z + 90);
+    }
+
+    protected virtual void Moving()
+    {
+        // Lerp (Linearly interpolate) between the current position and the target position based on the speed.
+        Vector3 newPos = Vector3.Lerp(transform.parent.position, targetPosition, this.speed);
+        // Update the ship's position to the new position.
+        transform.parent.position = newPos;
+    } 
+}
