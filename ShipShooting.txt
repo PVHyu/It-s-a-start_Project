@@ -1,0 +1,42 @@
+// Import các namespace cần thiết cho Unity
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+// Định nghĩa lớp ShipShooting kế thừa từ MonoBehaviour
+public class ShipShooting : MonoBehaviour
+{
+    // Cho phép chỉnh sửa các biến trong Unity Inspector
+    [SerializeField]
+    protected bool isShooting = false; // Cờ để kiểm tra xem tàu có đang bắn hay không
+
+    [SerializeField]
+    protected Transform bulletPrefab; // Tham chiếu đến prefab của viên đạn
+
+    // Phương thức FixedUpdate được gọi ở các khoảng thời gian cố định, thường dùng cho logic liên quan đến vật lý
+    private void FixedUpdate()
+    {
+        // Gọi phương thức Shooting để kiểm tra và thực hiện bắn đạn nếu cần
+        this.Shooting();
+    }
+
+    // Phương thức xử lý logic bắn đạn
+    protected virtual void Shooting()
+    {
+        // Nếu isShooting là false, không thực hiện hành động bắn
+        if (!this.isShooting)
+            return; // Dừng nếu không bắn
+
+        // Xác định vị trí sinh viên đạn (vị trí của đối tượng hiện tại)
+        Vector3 spawnPos = transform.position;
+
+        // Lấy hướng quay của đối tượng cha (có thể là tàu)
+        Quaternion rotation = transform.parent.rotation;
+
+        // Sinh viên đạn mới tại vị trí và hướng đã xác định
+        Instantiate(this.bulletPrefab, spawnPos, rotation);
+
+        // Ghi thông báo vào console để xác nhận việc bắn đã xảy ra
+        Debug.Log("Shooting");
+    }
+}

@@ -1,0 +1,22 @@
+// Import các namespace cần thiết
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+// Định nghĩa lớp BulletFlly kế thừa từ MonoBehaviour
+public class BulletFlly : MonoBehaviour
+{
+    // Biến được SerializeField để có thể chỉnh sửa trong Unity Inspector
+    [SerializeField] 
+    protected float movespeed = 1.0f; // Tốc độ di chuyển của viên đạn
+
+    [SerializeField]
+    protected Vector3 direction = Vector3.right; // Hướng của viên đạn, mặc định là hướng sang phải
+
+    // Phương thức Update được gọi mỗi frame
+    void Update()
+    {
+        // Di chuyển viên đạn theo hướng và tốc độ xác định, dựa trên thời gian thực (Time.deltaTime)
+        transform.parent.Translate(this.direction * this.movespeed * Time.deltaTime);
+    }
+}

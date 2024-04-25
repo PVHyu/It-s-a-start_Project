@@ -2,47 +2,69 @@
 // + Lấy vị trí trỏ chuột
 // + Object hướng đầu về phía target 
 // + Object đi theo target
+----------------------------------------------------------
 
-
+// Sử dụng các namespace cần thiết
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Định nghĩa lớp ShipMovement, kế thừa từ MonoBehaviour
 public class ShipMovement : MonoBehaviour
 {
-    // SerializedField allows private variables to be displayed in the Inspector for easy tweaking.
-    [SerializeField] protected Vector3 targetPosition; // The target position in world space.
-    [SerializeField] protected float speed = 0.1f; // The speed at which the ship moves towards the target position.
+    // Cho phép các biến được điều chỉnh trong Unity Inspector
+    [SerializeField]
+    protected Vector3 targetPosition; // Vị trí mục tiêu trong không gian thế giới
 
+    [SerializeField]
+    protected float speed = 0.1f; // Tốc độ di chuyển về phía mục tiêu
+
+    // FixedUpdate được gọi ở các khoảng thời gian cố định
     void FixedUpdate()
     {
+        // Lấy vị trí mục tiêu
         this.GetTargetPosition();
-        this.LootAtTarget();
-        this.Moving();
         
+        // Quay tàu về phía mục tiêu
+        this.LootAtTarget();
+        
+        // Di chuyển tàu về phía mục tiêu
+        this.Moving();
     }
 
+    // Phương thức lấy vị trí mục tiêu từ InputManager
     protected virtual void GetTargetPosition()
     {
-        // Convert the mouse position from screen space to world space.
+        // Chuyển đổi vị trí chuột từ tọa độ màn hình sang tọa độ thế giới
         this.targetPosition = InputManager.Instance.MouseWorldPos;
-        // Since we're dealing with 2D, set the Z component to 0 to ensure the ship stays on the same plane.
+
+        // Đảm bảo Z là 0 vì đây là môi trường 2D
         this.targetPosition.z = 0;
     }
 
+    // Phương thức quay tàu về phía mục tiêu
     protected virtual void LootAtTarget()
     {
+        // Tính toán vectơ chênh lệch giữa tàu và vị trí mục tiêu
         Vector3 diff = this.targetPosition - transform.parent.position;
+
+        // Chuẩn hóa vectơ để có độ dài 1
         diff.Normalize();
+
+        // Tính góc quay từ vectơ chênh lệch
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        transform.parent.rotation = Quaternion.Euler(0f, 0f, rot_z + 90);
+
+        // Quay tàu về phía mục tiêu, sử dụng góc quay tính được
+        transform.parent.rotation = Quaternion.Euler(0f, 0f, rot_z);
     }
 
+    // Phương thức di chuyển tàu về phía mục tiêu
     protected virtual void Moving()
     {
-        // Lerp (Linearly interpolate) between the current position and the target position based on the speed.
+        // Lerp (Nội suy tuyến tính) giữa vị trí hiện tại và vị trí mục tiêu dựa trên tốc độ
         Vector3 newPos = Vector3.Lerp(transform.parent.position, targetPosition, this.speed);
-        // Update the ship's position to the new position.
+
+        // Cập nhật vị trí của tàu với giá trị nội suy
         transform.parent.position = newPos;
-    } 
+    }
 }
